@@ -4,11 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import meserreurs.MonException;
+import metier.Listerecherche;
 import metier.Pays;
 import persistance.DialogueBD;
 
 public class WebServices {
 
+	/***
+	 * Récupération de la liste de tous les noms pays
+	 * @return Liste de /Pays
+	 * @throws MonException
+	 */
 	public List<String> getNomsPays() throws MonException {
 		List<String> noms = new ArrayList<String>();
 
@@ -20,8 +26,11 @@ public class WebServices {
 		return noms;
 	}
 
-	
-
+	/***
+	 * Récupération de la liste de tous les pays
+	 * @return
+	 * @throws MonException
+	 */
 	public List<Pays> getTousLesPays() throws MonException {
 		List<Pays> resultat = new ArrayList<Pays>();
 		
@@ -41,18 +50,65 @@ public class WebServices {
 		return resultat;
 	}
 
-	public Pays getUnPays(String nomPays) throws MonException {
+	/***
+	 * Récupération d'un pays
+	 * @param search
+	 * @return
+	 * @throws MonException
+	 */
+	public Pays getUnPays(String search) throws MonException {
 		Pays resultat = null;
+		
 		DialogueBD undlg = DialogueBD.getInstance();
-		List<Object> res = undlg.lecture("SELECT * FROM Pays WHERE nom_pays = '" + nomPays + "'");
+		List<Object> res = undlg.lecture("SELECT * FROM Pays WHERE nom_pays = '" + search + "'");
 
-		// String nomPays = res.get(0).toString();
-		String nomCapitale = res.get(1).toString();
-		int nbHabitants = Integer.parseInt(res.get(2).toString());
-
-		resultat = new Pays(nomPays, nomCapitale, nbHabitants);
+		if(res != null) {
+			// String nomPays = res.get(0).toString();
+			String nomCapitale = res.get(1).toString();
+			int nbHabitants = Integer.parseInt(res.get(2).toString());
+	
+			resultat = new Pays(search, nomCapitale, nbHabitants);
+		}
 
 		return resultat;
+	}
+	
+	/***
+	 * Recherche de pays ou capitale
+	 * @param search
+	 * @return
+	 * @throws MonException
+	 */
+	public Listerecherche searchPays(String search) throws MonException {
+		
+		Listerecherche listeRecherche = new Listerecherche();
+		
+		DialogueBD undlg = DialogueBD.getInstance();
+		List<Object> resPays = undlg.lecture("SELECT * FROM Pays WHERE nom_pays LIKE \'%"+search+"%\'");
+		for (int i = 0; i < resPays.size(); i += 3) {
+
+			String nomPays = resPays.get(i + 0).toString();
+			String nomCapitale = resPays.get(i + 1).toString();
+			int nbHabitants = Integer.parseInt(resPays.get(i + 2).toString());
+
+			Pays p = new Pays(nomPays, nomCapitale, nbHabitants);
+			
+			listeRecherche.getRetourPays().add(p);
+		}
+		
+		List<Object> resCapitale = undlg.lecture("SELECT * FROM Pays WHERE nom_capitale LIKE \'%"+search+"%\'");
+		for (int i = 0; i < resCapitale.size(); i += 3) {
+
+			String nomPays = resCapitale.get(i + 0).toString();
+			String nomCapitale = resCapitale.get(i + 1).toString();
+			int nbHabitants = Integer.parseInt(resCapitale.get(i + 2).toString());
+
+			Pays p = new Pays(nomPays, nomCapitale, nbHabitants);
+			
+			listeRecherche.getRetourVille().add(p);
+		}
+
+		return listeRecherche;
 	}
 
 }
