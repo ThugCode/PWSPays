@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import meserreurs.MonException;
-import metier.Listerecherche;
 import metier.Pays;
 import persistance.DialogueBD;
 
@@ -42,7 +41,7 @@ public class WebServices {
 			String nomCapitale = res.get(i + 1).toString();
 			int nbHabitants = Integer.parseInt(res.get(i + 2).toString());
 
-			Pays p = new Pays(nomPays, nomCapitale, nbHabitants);
+			Pays p = new Pays(nomPays, nomCapitale, nbHabitants, false);
 
 			resultat.add(p);
 		}
@@ -67,7 +66,7 @@ public class WebServices {
 			String nomCapitale = res.get(1).toString();
 			int nbHabitants = Integer.parseInt(res.get(2).toString());
 	
-			resultat = new Pays(search, nomCapitale, nbHabitants);
+			resultat = new Pays(search, nomCapitale, nbHabitants, false);
 		}
 
 		return resultat;
@@ -79,9 +78,9 @@ public class WebServices {
 	 * @return
 	 * @throws MonException
 	 */
-	public Listerecherche searchPays(String search) throws MonException {
+	public ArrayList<Pays> searchPays(String search) throws MonException {
 		
-		Listerecherche listeRecherche = new Listerecherche();
+		ArrayList<Pays> listeRecherche = new ArrayList<Pays>();
 		
 		DialogueBD undlg = DialogueBD.getInstance();
 		List<Object> resPays = undlg.lecture("SELECT * FROM Pays WHERE nom_pays LIKE \'%"+search+"%\'");
@@ -91,9 +90,9 @@ public class WebServices {
 			String nomCapitale = resPays.get(i + 1).toString();
 			int nbHabitants = Integer.parseInt(resPays.get(i + 2).toString());
 
-			Pays p = new Pays(nomPays, nomCapitale, nbHabitants);
+			Pays p = new Pays(nomPays, nomCapitale, nbHabitants, true);
 			
-			listeRecherche.getRetourPays().add(p);
+			listeRecherche.add(p);
 		}
 		
 		List<Object> resCapitale = undlg.lecture("SELECT * FROM Pays WHERE nom_capitale LIKE \'%"+search+"%\'");
@@ -103,11 +102,11 @@ public class WebServices {
 			String nomCapitale = resCapitale.get(i + 1).toString();
 			int nbHabitants = Integer.parseInt(resCapitale.get(i + 2).toString());
 
-			Pays p = new Pays(nomPays, nomCapitale, nbHabitants);
+			Pays p = new Pays(nomPays, nomCapitale, nbHabitants, false);
 			
-			listeRecherche.getRetourVille().add(p);
+			listeRecherche.add(p);
 		}
-
+		
 		return listeRecherche;
 	}
 

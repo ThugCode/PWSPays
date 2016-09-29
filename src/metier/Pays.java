@@ -1,17 +1,18 @@
-
-
 package metier;
 
-
 public class Pays {
+	
+	private boolean recherchePays;
 	private String nomPays;
 	private String nomCapitale;
-	private int nbHabitants;
+	private int nbHabitant;
 	
-	public Pays(String nomPays, String nomCapitale, int nbHabitants) {
+	
+	public Pays(String nomPays, String nomCapitale, int nbHabitants, boolean recherche) {
+		this.recherchePays = recherche;
 		this.nomPays = nomPays;
 		this.nomCapitale = nomCapitale;
-		this.nbHabitants = nbHabitants;
+		this.nbHabitant = nbHabitants;
 	}
 
 	public String getNomPays() {
@@ -22,7 +23,15 @@ public class Pays {
 		return nomCapitale;
 	}
 
-	public int getNbHabitants() {
-		return nbHabitants;
+	public int getNbHabitant() {
+		return nbHabitant;
+	}
+
+	public boolean isRecherchePays() {
+		return recherchePays;
+	}
+
+	public String toString() {
+		return nomPays+" : "+nomCapitale+" / "+nbHabitant+" -> "+recherchePays;
 	}
 }
